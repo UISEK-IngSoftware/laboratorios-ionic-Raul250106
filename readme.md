@@ -2,9 +2,9 @@
 
 ## Información del Estudiante
 
-- **Nombre:** [Tu nombre completo aquí]
-- **Carrera:** [Tu carrera]
-- **Fecha de inicio:** [Fecha]
+- **Nombre:** Raúl Alejandro Luna Vizcaino
+- **Carrera:** Ingenieria informatica
+- **Fecha de inicio:** 3 / 6 / 2026
 
 ---
 

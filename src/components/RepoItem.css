@@ -1,9 +1,9 @@
 .opciones{
-    background-color: white;
+    background-color:  rgb(0, 235, 212);
 }
 
 .crear{
-    color: blue;
+    color: white;
 }
 
 .borrar{
@@ -11,5 +11,5 @@
 }
 
 .favorito{
-    color: gold;
+    color: rgb(255, 255, 0);
 }

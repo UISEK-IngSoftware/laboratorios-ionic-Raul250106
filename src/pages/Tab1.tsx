@@ -1,8 +1,28 @@
-import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
 import './Tab1.css';
 import RepoItem from '../components/RepoItem';
+import { fecthRepositories } from '../services/GithubService';
+import { Repository } from '../interfaces/Repository';
+import React from 'react';
+import LoadingSpinner from '../components/loadingSpinner';
 
 const Tab1: React.FC = () => {
+
+  const [repos, setRepos] = React.useState <Repository[]>([]);
+  const [loading, setLoading] = React.useState <boolean>(false);
+  
+  const loadRepos = async () => {
+    const reposData = await fecthRepositories();
+    setRepos (reposData);
+    setLoading (false);
+  }
+
+  useIonViewWillEnter (() => {
+    loadRepos();
+  })
+
+
+
   return (
     <IonPage>
       <IonHeader>
@@ -18,12 +38,16 @@ const Tab1: React.FC = () => {
         </IonHeader>
 
         <IonList>
-          <RepoItem name="Repositorio 1" avatarUrl={"https://avatars.githubusercontent.com/u/216421919?v=4"}/>
-          <RepoItem name="Repositorio 2" avatarUrl={"https://avatars.githubusercontent.com/u/216421919?v=4"}/>
-          <RepoItem name="Repositorio 3" avatarUrl={"https://avatars.githubusercontent.com/u/216421919?v=4"}/>
-          <RepoItem name="Repositorio 4" avatarUrl={"https://avatars.githubusercontent.com/u/216421919?v=4"}/>
-          <RepoItem name="Repositorio 5" avatarUrl={"https://avatars.githubusercontent.com/u/216421919?v=4"}/>
+          {repos.map(repo => (
+            <RepoItem key={repo.id} {...repo}/>
+          ))}
         </IonList>
+        {loading && <LoadingSpinner isOpen = {loading} />}
+        {!loading && repos.length === 0 && (
+          <div>
+            <p>No hay repositorios encontrados.</p>
+          </div>
+        )}
 
       </IonContent>
     </IonPage>

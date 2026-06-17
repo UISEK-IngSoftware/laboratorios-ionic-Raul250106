@@ -13,7 +13,7 @@ const RepoItem: React.FC<Repository> = ( repo ) => {
                 </IonThumbnail>
                 <IonLabel>
                     <h1>{repo.name}</h1>
-                    {repo.descripction && <p><strong> Description: </strong> {repo.descripction} </p>}
+                    {repo.description && <p><strong> Description: </strong> {repo.description} </p>}
                     {repo.language && (<p><strong> Language: </strong> {repo.language} </p>)}
                 </IonLabel>
             </IonItem>

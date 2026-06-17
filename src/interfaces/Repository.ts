@@ -1,7 +1,7 @@
 export interface Repository {
     id: number;
     name: string;
-    descripction: string;
+    description: string;
     language: string;
     owner: {
         login: string;

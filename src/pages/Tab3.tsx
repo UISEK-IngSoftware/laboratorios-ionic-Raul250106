@@ -1,24 +1,34 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonPage, IonText, IonTitle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
 import './Tab3.css';
 import React from 'react';
 import { GithubUser } from '../interfaces/GithubUser';
 import { getUserInfo } from '../services/GithubService';
 import LoadingSpinner from '../components/loadingSpinner';
+import AuthService from '../services/AuthService';
+import { useHistory } from 'react-router';
+import { logOutOutline } from 'ionicons/icons';
 
 const Tab3: React.FC = () => {
-  const [userInfo, setUserInfo] = React.useState <GithubUser |  null>(null);
-    const [loading, setLoading] = React.useState <boolean>(false);
-    
-    const loadUserInfo = async () => {
-      setLoading (true);
-      const userData = await getUserInfo();
-      setUserInfo (userData);
-      setLoading (false);
+  const [userInfo, setUserInfo] = React.useState<GithubUser | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = React.useState<string>("");
+  const history = useHistory()
+
+  const loadUserInfo = async () => {
+    setLoading(true);
+    getUserInfo().then ((user) => setUserInfo(user))
+      .catch((error) => setErrorMsg("Error al leer información: " + error))
+      .finally(() => setLoading(false))
     }
-  
-    useIonViewWillEnter (() => {
-      loadUserInfo();
-    });
+
+  const handleLogout = () => {
+    AuthService.logout()
+    history.replace('/login')
+  }
+
+  useIonViewWillEnter(() => {
+    loadUserInfo();
+  });
 
   return (
     <IonPage>
@@ -35,17 +45,22 @@ const Tab3: React.FC = () => {
         </IonHeader>
 
         <div className='card-container'>
-          <IonCard className='card'>
-            <img src={userInfo?.avatar_url} alt={userInfo?.login}/>
+          {userInfo && (<IonCard className='card'>
+            <img src={userInfo?.avatar_url} alt={userInfo?.login} />
             <IonCardHeader>
               <IonCardTitle>{userInfo?.name}</IonCardTitle>
               <IonCardSubtitle>{userInfo?.login}</IonCardSubtitle>
             </IonCardHeader>
             <IonCardContent>{userInfo?.bio}</IonCardContent>
-          </IonCard>
+          </IonCard>)}
+          { errorMsg != "" && <IonText color="danger">{errorMsg}</IonText>}
+          <IonButton expand='block' color="danger" onClick={handleLogout}>
+            <IonIcon slot='start' icon={logOutOutline}/>
+            Salir
+          </IonButton>
         </div>
       </IonContent>
-      {loading && <LoadingSpinner isOpen = {loading} />}
+      {loading && <LoadingSpinner isOpen={loading} />}
     </IonPage>
   );
 };

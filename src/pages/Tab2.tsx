@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonHeader, IonInput, IonPage, IonTextarea, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonInput, IonPage, IonText, IonTextarea, IonTitle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
 import './Tab2.css';
 import React from 'react';
 import { RepositoryPayload } from '../interfaces/RepositoryPayload';
@@ -10,6 +10,7 @@ const Tab2: React.FC = () => {
   const history = useHistory();
 
   const [loading, setLoading] = React.useState <boolean>(false);
+  const [errorMsg, setErrorMsg] = React.useState <string>("");
 
   const repoFormData : RepositoryPayload = {
     name: '',
@@ -26,21 +27,21 @@ const Tab2: React.FC = () => {
 
   const saveRepository = () => {
     if (repoFormData.name.trim() === '') {
-      alert('Este campo es obligatorio');
+      setErrorMsg('Este campo es obligatorio');
       return;
     }
     setLoading(true);
     createRepository(repoFormData)
     .then (() => {
       history.push('/tab1')
-    }).catch(() => {
-      alert('Error al crear repositorio');
+    }).catch((error) => {
+      setErrorMsg('Error al crear repositorio' + error);
     }).finally(() => {
       setLoading(false)
     });
   };
 
-
+  useIonViewWillEnter(() => setErrorMsg(""))
 
   return (
     <IonPage>
@@ -77,6 +78,7 @@ const Tab2: React.FC = () => {
             onIonChange={e => setRepoDescription(e.detail.value!)}
             autoGrow
           ></IonTextarea>
+          { errorMsg != "" && <IonText color="danger">{errorMsg}</IonText>}
           <IonButton className='form-field' expand='block' fill='solid' onClick={saveRepository}>
             Crear repositorio
           </IonButton>

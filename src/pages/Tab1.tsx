@@ -1,7 +1,7 @@
-import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
+import { IonContent, IonHeader, IonList, IonPage, IonText, IonTitle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
 import './Tab1.css';
 import RepoItem from '../components/RepoItem';
-import { fecthRepositories } from '../services/GithubService';
+import {fetchRepositories } from '../services/GithubService';
 import { Repository } from '../interfaces/Repository';
 import React from 'react';
 import LoadingSpinner from '../components/loadingSpinner';
@@ -10,11 +10,16 @@ const Tab1: React.FC = () => {
 
   const [repos, setRepos] = React.useState <Repository[]>([]);
   const [loading, setLoading] = React.useState <boolean>(false);
+  const [errorMsg, setErrorMsg] = React.useState <string>("");
+
   
   const loadRepos = async () => {
-    const reposData = await fecthRepositories();
-    setRepos (reposData);
-    setLoading (false);
+    setLoading (true);
+    fetchRepositories().then((reposData) => {
+      setRepos (reposData)
+    }) .catch ((error) => {
+      setErrorMsg("Error al cargar repositorios: " + error);
+    }) .finally(() => setLoading(false))
   }
 
   useIonViewWillEnter (() => {
@@ -30,7 +35,7 @@ const Tab1: React.FC = () => {
           <IonTitle>Repositorios</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen className='ion-padding'>
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Repositorios</IonTitle>
@@ -43,12 +48,11 @@ const Tab1: React.FC = () => {
           ))}
         </IonList>
         {loading && <LoadingSpinner isOpen = {loading} />}
-        {!loading && repos.length === 0 && (
-          <div>
-            <p>No hay repositorios encontrados.</p>
-          </div>
+        {errorMsg !== "" && (
+          <IonText  color = "danger">
+            {errorMsg}
+          </IonText>
         )}
-
       </IonContent>
     </IonPage>
   );
